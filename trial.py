@@ -38,12 +38,51 @@ def status_check(pet_name, hunger, happiness, energy):
         
     return True
 
-def feed(hunger):
+def feed(pet_name, hunger):
     """Feeding the pet to decrease hunger level"""
-    if hunger > 0 and  hunger < 100:
-        hunger += 10   
-        if hunger > 100:
-            hunger = 100 
+    food_items = {
+        "Dog Biscuit": 5,
+        "Fish": 10,
+        "Chicken": 10,
+        "Carrot": 5,
+        "Apple": 5,
+        "Pizza Slice": 10,
+        "Ice Cream": 5,
+        "Peanut Butter": 10,
+        "Chocolate Cake": 5,
+        "Sweet Potato": 10,
+        "Spinach": 5,
+        "Cheeseburger": 10,
+        "Sushi": 10,
+        "Burger Patty": 10,
+        "Taco": 10
+    }
+
+    print("What would you like to feed your pet?")
+    for i, (food, level) in enumerate(food_items.items() , 1):
+        print(f"{i}. {food} (Hunger Boost: {level})")
+    
+    try:
+        choice = int(input("Enter your choice number: "))
+        food_list = list(food_items.keys())
+        if 1 <= choice <= len(food_list):
+            food_name = food_list[choice - 1]
+            hunger_boost = food_items[food_name]
+            
+            hunger += hunger_boost   
+            if hunger > 100:
+                hunger = 100 
+            time.sleep(0.2)
+            print(f"\nYou fed your pet {food_name}.")
+            print("{pet_name} is eating...")
+            time.sleep(0.2)
+            print(f"Hunger increased by {hunger_boost}.\n")
+            time.sleep(0.1)
+        else:
+            print("Invalid choice! Please select a valid food option.")
+    except ValueError:
+        print("Invalid input! Please enter a number.")
+    
     return hunger
     
 
@@ -211,7 +250,7 @@ def pet_actions(pet_name, hunger, happiness, energy):
         print("")
         
         if choice == "1":
-            hunger = feed(hunger)          
+            hunger = feed(pet_name, hunger)          
         elif choice == "2":
             happiness, energy = play( happiness, energy)
         elif choice == "3":
