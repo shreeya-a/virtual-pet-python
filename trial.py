@@ -8,18 +8,18 @@ PETS_FILE = "pet-list.txt "
 
 print("Welcome to Virtual Pet")
 print("-----------------------")
-time.sleep(1)
+time.sleep(0.5)
 
 
 def print_current_status(pet_name, hunger, happiness, energy):
             print(f"Loading {pet_name}'s Vitals:")
-            time.sleep(0.6)
+            time.sleep(0.3)
             print(f"Hunger: {hunger}")
-            time.sleep(0.6)
+            time.sleep(0.3)
             print(f"Happiness: {happiness}")
-            time.sleep(0.6)
+            time.sleep(0.3)
             print(f"Energy: {energy}")
-            time.sleep(0.6)
+            time.sleep(0.3)
             return
 
 def status_check(pet_name, hunger, happiness, energy):
@@ -30,7 +30,8 @@ def status_check(pet_name, hunger, happiness, energy):
     # print(f"Happiness: {happiness}")
     # print(f"Energy: {energy}")
     if hunger == 0 or happiness == 0 or energy == 0:
-        print(f"Oh no! {pet_name} is sick. Please take care better care  of your future pets.")
+        print(f"Oh no! {pet_name} is sick. Please take care better care  of your future pets.\n")
+        time.sleep(0.5)
         return False
     if hunger >= 80 and happiness >= 80 and energy >= 80:
         print(f"Oh wow! {pet_name} has won!! They are super happy and energetic.")
@@ -147,8 +148,10 @@ def old_pet(pet_name):
             # print(f"Energy={energy}")
             print_current_status(pet_name, hunger, happiness, energy)
             if hunger == 0 or happiness == 0 or energy == 0:
+                time.sleep(0.1)
                 print(f"{pet_name}'s health is too low. The game is over.")
                 print("Start with a new pet.")
+                time.sleep(0.1)
                 print("Loading Pet Menu...\n")
                 time.sleep(2)
                 return
@@ -194,10 +197,16 @@ def pet_actions(pet_name, hunger, happiness, energy):
     while good_status:
         time.sleep(0.5)
         print("\nWhat would you like to do?")
+        time.sleep(0.1)
         print(f"1. Feed {pet_name}.")
+        time.sleep(0.1)
         print(f"2. Play with {pet_name}.")
+        time.sleep(0.1)
         print(f"3. Rest {pet_name}.")
+        time.sleep(0.1)
         print(f"4. Quit and Save your progress.")
+        time.sleep(0.1)
+
         choice = input("Enter your choice: ")
         print("")
         
@@ -222,7 +231,7 @@ def pet_actions(pet_name, hunger, happiness, energy):
             # time.sleep(0.6)
             print_current_status(pet_name, hunger, happiness, energy)
             print("\nLoading Pet Menu...\n")
-            time.sleep(2)
+            time.sleep(1.5)
             return hunger, happiness, energy
         else:
             print("Invalid choice! \n")
