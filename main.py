@@ -6,28 +6,84 @@ from inputimeout import inputimeout, TimeoutOccurred
 
 PETS_FILE = "pet-list.txt "
 
-print("---Welcome to Virtual Pet---")
-print("")
+print("Welcome to Virtual Pet")
+print("-----------------------")
+time.sleep(0.5)
 
-def status_check(pet_name, hunger, happiness, energy):
-    print(f"Current Status of {pet_name}")
-    print(f"Hunger: {hunger}")
-    print(f"Happiness: {happiness}")
-    print(f"Energy: {energy}")
+def print_current_status(pet_name, hunger, happiness, energy):
+            print(f"Loading {pet_name}'s Vitals:")
+            time.sleep(0.3)
+            print(f"Hunger: {hunger}")
+            time.sleep(0.3)
+            print(f"Happiness: {happiness}")
+            time.sleep(0.3)
+            print(f"Energy: {energy}")
+            time.sleep(0.3)
+            return
+
+def status_check(pet_name, hunger, happiness, energy, consecutive_wins):
+    print(f"Current Status of {pet_name}:")
+    print_current_status(pet_name, hunger, happiness, energy)
+
     if hunger == 0 or happiness == 0 or energy == 0:
-        print(f"Oh no! {pet_name} is sick. Please take care better care  of your future pets.")
-        return False
+        print(f"Oh no! {pet_name} is sick. Please take care better care  of your future pets.\n")
+        time.sleep(0.5)
+        return False, 0
     if hunger >= 80 and happiness >= 80 and energy >= 80:
-        print(f"Oh wow! {pet_name} has won!! They are super happy and energetic.")
+        consecutive_wins += 1
+        if consecutive_wins == 3:
+            print(f"Oh wow! {pet_name} has won!! They are super happy and energetic.")
+            return False, consecutive_wins
+    else:
+        consecutive_wins = 0      
         
-    return True
+    return True, consecutive_wins
 
-def feed(hunger):
+def feed(pet_name, hunger):
     """Feeding the pet to decrease hunger level"""
-    if hunger > 0 and  hunger < 100:
-        hunger += 10   
-        if hunger > 100:
-            hunger = 100 
+    food_items = {
+        "Dog Biscuit": 5,
+        "Fish": 10,
+        "Chicken": 10,
+        "Carrot": 5,
+        "Apple": 5,
+        "Pizza Slice": 10,
+        "Ice Cream": 5,
+        "Peanut Butter": 10,
+        "Chocolate Cake": 5,
+        "Sweet Potato": 10,
+        "Spinach": 5,
+        "Cheeseburger": 10,
+        "Sushi": 10,
+        "Burger Patty": 10,
+        "Taco": 10
+    }
+
+    print("What would you like to feed your pet?")
+    for i, (food, level) in enumerate(food_items.items() , 1):
+        print(f"{i}. {food} (Hunger Boost: {level})")
+    
+    try:
+        choice = int(input("Enter your choice number: "))
+        food_list = list(food_items.keys())
+        if 1 <= choice <= len(food_list):
+            food_name = food_list[choice - 1]
+            hunger_boost = food_items[food_name]
+            
+            hunger += hunger_boost   
+            if hunger > 100:
+                hunger = 100 
+            time.sleep(0.2)
+            print(f"\nYou fed your pet {food_name}.")
+            print(f"{pet_name} is eating...")
+            time.sleep(0.2)
+            print(f"Hunger increased by {hunger_boost}.\n")
+            time.sleep(0.1)
+        else:
+            print("Invalid choice! Please select a valid food option.")
+    except ValueError:
+        print("Invalid input! Please enter a number.")
+    
     return hunger
     
 
@@ -56,7 +112,9 @@ def random_event():
     "The pet finds an unexpected stash of its favorite toy or item."
     ]
     event = random.choice(happiness_boost_events)
+    time.sleep(0.5)
     print(event)
+    time.sleep(1)
     happiness_boost = random.choice([5, 10])
     return happiness_boost
     
@@ -71,8 +129,12 @@ def play(happiness, energy):
         energy -= 10
     return  happiness, energy
 
-def rest(energy, hunger):
+def rest(pet_name,energy, hunger):
     """Increases energy, slightly  decreases hunger."""
+    print(f"{pet_name} is resting...")
+    time.sleep(3)
+    print(f"{pet_name} is back with more energy!!!!\n")
+    time.sleep(1)
     energy += 10
     if energy > 100:
         energy = 100
@@ -96,11 +158,6 @@ def update_pet_details(pet_name, hunger, happiness, energy, lines):
     with open(PETS_FILE.strip(), "w") as file:
         file.writelines(updated_lines)
         
-    print(f"Current Status of {pet_name}")
-    print(f"Hunger: {hunger}")
-    print(f"Happiness: {happiness}")
-    print(f"Energy: {energy}")
-    print(f"Progress for {pet_name} updated successfully.\n")
 
 
 def old_pet(pet_name):
@@ -119,18 +176,18 @@ def old_pet(pet_name):
             hunger, happiness, energy = map(int, attributes.split())
             pet_found = True
             time.sleep(2)
-            print(f"Here's {pet_name}!")
-            print(f"Loading {pet_name}'s Vitals:")
-            print(f"Hunger={hunger}")
-            print(f"Happiness={happiness}")
-            print(f"Energy={energy}")
+            print(f"Here comes {pet_name}!\n")
+            print_current_status(pet_name, hunger, happiness, energy)
+            if hunger == 0 or happiness == 0 or energy == 0:
+                time.sleep(0.1)
+                print(f"{pet_name}'s health is too low. The game is over.")
+                print("Start with a new pet.")
+                time.sleep(0.1)
+                print("Loading Pet Menu...\n")
+                time.sleep(2)
+                return
             hunger, happiness, energy = pet_actions(pet_name, hunger, happiness, energy)
-            # Update the file with new details after playing
-            if hunger > 0 and happiness > 0 and energy > 0:
-                update_pet_details(pet_name, hunger, happiness, energy, lines)
-                break
-            else:
-                break
+            update_pet_details(pet_name, hunger, happiness, energy, lines)
 
     if not pet_found:
         print(f"No old pet found with the name {pet_name}.")
@@ -139,8 +196,6 @@ def old_pet(pet_name):
 # Defining attributes of new pet
 def new_pet(pet_name):
     """Naming pet and attribute initialization"""
-    # print("--Name your pet--")
-    # pet_name  = input("Name: ").capitalize()
     hunger = 50
     happiness = 50
     energy = 50  
@@ -154,45 +209,54 @@ def add_to_file(pet_name, hunger, happiness, energy):
     with open(PETS_FILE.strip(), "a") as file:  
         file.write(f"{pet_name}: {hunger} {happiness} {energy}\n")
     
-    print(f"Current Status of {pet_name}")
-    print(f"Hunger: {hunger}")
-    print(f"Happiness: {happiness}")
-    print(f"Energy: {energy}")
     print(f"Progress for {pet_name} saved successfully.")
-    print("----------------------------------------\n")
+    return
+    
+
 
 # Actions choice list
 def pet_actions(pet_name, hunger, happiness, energy):
     good_status = True 
+    consecutive_wins = 0
     while good_status:
-        print("What would you like to do?")
+        time.sleep(0.5)
+        print("\nWhat would you like to do?")
+        time.sleep(0.1)
         print(f"1. Feed {pet_name}.")
+        time.sleep(0.1)
         print(f"2. Play with {pet_name}.")
+        time.sleep(0.1)
         print(f"3. Rest {pet_name}.")
+        time.sleep(0.1)
         print(f"4. Quit and Save your progress.")
+        time.sleep(0.1)
+
         choice = input("Enter your choice: ")
-        
+        print("")
         
         if choice == "1":
-            hunger = feed(hunger)          
+            hunger = feed(pet_name, hunger)          
         elif choice == "2":
             happiness, energy = play( happiness, energy)
         elif choice == "3":
-            energy, hunger = rest(energy, hunger)
+            energy, hunger = rest(pet_name,energy, hunger)
         elif choice == "4":
-            print("Thanks for playing.")
+            time.sleep(0.5)
+            print("\nThanks for playing!!")
+            time.sleep(0.3)
             add_to_file(pet_name, hunger, happiness, energy)
+            print_current_status(pet_name, hunger, happiness, energy)
+            print("\nLoading Pet Menu...\n")
+            time.sleep(1.5)
             return hunger, happiness, energy
         else:
             print("Invalid choice! \n")
         
-        good_status =  status_check(pet_name, hunger, happiness, energy)
+        good_status, consecutive_wins = status_check(pet_name, hunger, happiness, energy, consecutive_wins)
+
         
         if not good_status:  # If the status check returns False, exit the loop
             return hunger, happiness, energy
-    
-
-        
 
 
 
@@ -205,15 +269,14 @@ def main():
         print("3. Exit")
         choice = input("Enter your choice: ")
         
-        
         if choice == "1":
-            print("\n--Name your pet--")
             try:
-                pet_name  = inputimeout(prompt="Name: ", timeout=8)
+                pet_name  = inputimeout(prompt="Name your pet: ", timeout=8)
                 pet_name = pet_name.capitalize()
                 new_pet(pet_name)
             except TimeoutOccurred:
-                print("\n OOPS! You took too long!")
+                print("\nOOPS! You took too long! Try again.\n")
+                time.sleep(0.5)
             
         elif choice == "2":
             try:
@@ -221,16 +284,15 @@ def main():
                 pet_name = pet_name.capitalize()
                 old_pet(pet_name)
             except TimeoutOccurred:
-                print("\n OOPS! You took too long!")
+                print("\n OOPS! You took too long!\n")
+                time.sleep(0.5)
         elif choice == "3":
             print("Thank you for playing.")
             print("Goodbye!")
             break
             
         else:
-            print("Invalid choice! Choose again.")
-
-
+            print("\nInvalid choice! Choose again.\n")
 
 if __name__ == "__main__":
     main()

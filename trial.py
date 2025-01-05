@@ -22,7 +22,7 @@ def print_current_status(pet_name, hunger, happiness, energy):
             time.sleep(0.3)
             return
 
-def status_check(pet_name, hunger, happiness, energy):
+def status_check(pet_name, hunger, happiness, energy, consecutive_wins):
     print(f"Current Status of {pet_name}:")
     print_current_status(pet_name, hunger, happiness, energy)
     
@@ -32,11 +32,16 @@ def status_check(pet_name, hunger, happiness, energy):
     if hunger == 0 or happiness == 0 or energy == 0:
         print(f"Oh no! {pet_name} is sick. Please take care better care  of your future pets.\n")
         time.sleep(0.5)
-        return False
+        return False, 0
     if hunger >= 80 and happiness >= 80 and energy >= 80:
-        print(f"Oh wow! {pet_name} has won!! They are super happy and energetic.")
+        consecutive_wins += 1
+        if consecutive_wins == 3:
+            print(f"Oh wow! {pet_name} has won!! They are super happy and energetic.")
+            return False, consecutive_wins
+    else:
+        consecutive_wins = 0      
         
-    return True
+    return True, consecutive_wins
 
 def feed(pet_name, hunger):
     """Feeding the pet to decrease hunger level"""
@@ -74,7 +79,7 @@ def feed(pet_name, hunger):
                 hunger = 100 
             time.sleep(0.2)
             print(f"\nYou fed your pet {food_name}.")
-            print("{pet_name} is eating...")
+            print(f"{pet_name} is eating...")
             time.sleep(0.2)
             print(f"Hunger increased by {hunger_boost}.\n")
             time.sleep(0.1)
@@ -233,6 +238,7 @@ def add_to_file(pet_name, hunger, happiness, energy):
 # Actions choice list
 def pet_actions(pet_name, hunger, happiness, energy):
     good_status = True 
+    consecutive_wins = 0
     while good_status:
         time.sleep(0.5)
         print("\nWhat would you like to do?")
@@ -275,7 +281,9 @@ def pet_actions(pet_name, hunger, happiness, energy):
         else:
             print("Invalid choice! \n")
         
-        good_status =  status_check(pet_name, hunger, happiness, energy)
+        # good_status,  =  status_check(pet_name, hunger, happiness, energy)
+        good_status, consecutive_wins = status_check(pet_name, hunger, happiness, energy, consecutive_wins)
+
         
         if not good_status:  # If the status check returns False, exit the loop
             return hunger, happiness, energy

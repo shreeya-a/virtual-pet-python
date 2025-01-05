@@ -4,4 +4,5 @@ Lulu: 55 55 50
 Soso: 60 70 50
 Lolo: 80 70 40
 Hoho: 60 95 0
-Gogo: 55 60 40
+Gogo: 75 70 40
+Lplp: 55 95 0
